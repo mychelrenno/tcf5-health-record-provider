@@ -2,7 +2,7 @@
 
 ![Java](https://img.shields.io/badge/Java-21-orange.svg) ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg) ![Keycloak](https://img.shields.io/badge/Keycloak-Secured-blueviolet.svg)
 
-## 📖 Sobre o Projeto
+## Sobre o Projeto
 Este microserviço faz parte do desafio do **Hackathon da Pós-Graduação em Arquitetura e Desenvolvimento Java (FIAP)**. O **Provider** atua como a fonte única da verdade para o histórico clínico do paciente no contexto do SUS.
 
 Ele centraliza os atendimentos, exames e observações clínicas, permitindo buscas otimizadas pelo **CPF** ou **CNS (Cartão Nacional de Saúde)** e garantindo a interoperabilidade e a fácil leitura dos dados pelos profissionais de saúde.
