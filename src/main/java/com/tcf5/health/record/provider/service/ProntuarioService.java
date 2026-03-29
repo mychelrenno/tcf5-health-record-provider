@@ -1,7 +1,5 @@
 package com.tcf5.health.record.provider.service;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import com.tcf5.health.record.provider.model.ProntuarioEntity;
 import com.tcf5.health.record.provider.repository.ProntuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,14 +32,7 @@ public class ProntuarioService {
 
     public ProntuarioEntity atualizarObservacoes(UUID id, String novasObservacoes) {
         ProntuarioEntity entity = buscarPorId(id);
-
-        String historicoAnterior = entity.getObservacoes() != null ? entity.getObservacoes() : "";
-
-        String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-
-        String textoAtualizado = historicoAnterior + "\n[" + dataHora + "] " + novasObservacoes;
-
-        entity.setObservacoes(textoAtualizado);
+        entity.setObservacoes(novasObservacoes);
         return repository.save(entity);
     }
 }
