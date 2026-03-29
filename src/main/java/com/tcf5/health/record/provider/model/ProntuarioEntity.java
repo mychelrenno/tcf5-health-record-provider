@@ -19,18 +19,17 @@ public class ProntuarioEntity {
     private UUID id;
 
     @Column(nullable = false)
-    private String pacienteId;
+    private String cpf;
+
+    private String cns;
 
     @Column(nullable = false)
     private String tipoRegistro;
-
-    @Column(columnDefinition = "TEXT")
-    private String conteudoHl7;
 
     private String especialidade;
 
     private LocalDateTime dataRegistro;
 
-    @Column(length = 500)
+    @Column(length = 2000)
     private String observacoes;
 }

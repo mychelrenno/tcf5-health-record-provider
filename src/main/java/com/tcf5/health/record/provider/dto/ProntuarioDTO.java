@@ -1,5 +1,6 @@
 package com.tcf5.health.record.provider.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,10 +15,13 @@ import java.util.UUID;
 public class ProntuarioDTO {
 
     private UUID id;
-    private String pacienteId;
+    private String cpf;
+    private String cns;
     private String tipoRegistro;
     private String especialidade;
+
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime dataRegistro;
-    private String conteudoHl7;
+
     private String observacoes;
 }

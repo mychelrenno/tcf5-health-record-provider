@@ -16,56 +16,61 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/prontuarios")
 @RequiredArgsConstructor
-@Tag(name = "Prontuário Provider", description = "Endpoints para consulta e gestão de prontuários unificados")
+@Tag(name = "Prontuário Provider", description = "Gestão de prontuários via CPF/CNS")
 public class ProntuarioController {
 
     private final ProntuarioService service;
 
-    @GetMapping("/paciente/{pacienteId}")
-    @Operation(summary = "Lista o histórico completo de um paciente",
-            description = "Retorna todos os registros ordenados pelo mais recente")
-    public ResponseEntity<List<ProntuarioDTO>> listarHistorico(@PathVariable String pacienteId) {
-        List<ProntuarioDTO> dtos = service.listarHistorico(pacienteId).stream()
+    @GetMapping("/paciente/{cpf}")
+    @Operation(summary = "Lista o histórico completo pelo CPF")
+    public ResponseEntity<List<ProntuarioDTO>> listarHistorico(@PathVariable String cpf) {
+        List<ProntuarioDTO> dtos = service.listarHistorico(cpf).stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
-    @GetMapping("/paciente/{pacienteId}/filtro")
-    @Operation(summary = "Consulta filtrada por tipo ou especialidade",
-            description = "Realiza buscas filtradas no histórico unificado do paciente.")
+    @GetMapping("/paciente/{cpf}/filtro")
+    @Operation(summary = "Consulta filtrada por tipo ou especialidade")
     public ResponseEntity<List<ProntuarioDTO>> filtrar(
-            @PathVariable String pacienteId,
+            @PathVariable String cpf,
             @RequestParam(required = false) String tipo,
             @RequestParam(required = false) String especialidade) {
 
         List<ProntuarioEntity> resultados;
 
         if (tipo != null) {
-            resultados = service.filtrarPorTipo(pacienteId, tipo);
+            resultados = service.filtrarPorTipo(cpf, tipo);
         } else if (especialidade != null) {
-            resultados = service.filtrarPorEspecialidade(pacienteId, especialidade);
+            resultados = service.filtrarPorEspecialidade(cpf, especialidade);
         } else {
-            resultados = service.listarHistorico(pacienteId);
+            resultados = service.listarHistorico(cpf);
         }
 
         return ResponseEntity.ok(resultados.stream().map(this::mapToDTO).collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Busca um registro detalhado pelo ID")
+    @Operation(summary = "Busca um registro detalhado pelo ID interno")
     public ResponseEntity<ProntuarioDTO> buscarPorId(@PathVariable UUID id) {
         return ResponseEntity.ok(mapToDTO(service.buscarPorId(id)));
+    }
+
+    @PatchMapping("/{id}/observacoes")
+    @Operation(summary = "Atualiza notas clínicas do prontuário")
+    public ResponseEntity<ProntuarioDTO> atualizarEdicao(@PathVariable UUID id, @RequestBody String observacoes) {
+        ProntuarioEntity atualizado = service.atualizarObservacoes(id, observacoes);
+        return ResponseEntity.ok(mapToDTO(atualizado));
     }
 
     private ProntuarioDTO mapToDTO(ProntuarioEntity entity) {
         return ProntuarioDTO.builder()
                 .id(entity.getId())
-                .pacienteId(entity.getPacienteId())
+                .cpf(entity.getCpf())
+                .cns(entity.getCns())
                 .tipoRegistro(entity.getTipoRegistro())
                 .especialidade(entity.getEspecialidade())
                 .dataRegistro(entity.getDataRegistro())
-                .conteudoHl7(entity.getConteudoHl7())
                 .observacoes(entity.getObservacoes())
                 .build();
     }
