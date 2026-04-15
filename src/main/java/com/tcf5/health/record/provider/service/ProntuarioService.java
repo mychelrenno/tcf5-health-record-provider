@@ -1,7 +1,7 @@
 package com.tcf5.health.record.provider.service;
 
-import com.tcf5.health.record.provider.model.ProntuarioEntity;
-import com.tcf5.health.record.provider.repository.ProntuarioRepository;
+import com.tcf5.health.record.provider.model.HealthRecord;
+import com.tcf5.health.record.provider.repository.HealthRecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -11,28 +11,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProntuarioService {
 
-    private final ProntuarioRepository repository;
+    private final HealthRecordRepository healthRecordRepository;
 
-    public List<ProntuarioEntity> listarHistorico(String cpf) {
-        return repository.findByCpfOrderByDataRegistroDesc(cpf);
+    public List<HealthRecord> listarHistorico(String cpf) {
+        return healthRecordRepository.findByPatientIdOrderByProcessedAtDesc(cpf);
     }
 
-    public List<ProntuarioEntity> filtrarPorTipo(String cpf, String tipo) {
-        return repository.findByCpfAndTipoRegistro(cpf, tipo.toUpperCase());
-    }
-
-    public List<ProntuarioEntity> filtrarPorEspecialidade(String cpf, String especialidade) {
-        return repository.findByCpfAndEspecialidade(cpf, especialidade);
-    }
-
-    public ProntuarioEntity buscarPorId(UUID id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Prontuário não encontrado"));
-    }
-
-    public ProntuarioEntity atualizarObservacoes(UUID id, String novasObservacoes) {
-        ProntuarioEntity entity = buscarPorId(id);
-        entity.setObservacoes(novasObservacoes);
-        return repository.save(entity);
+    public HealthRecord buscarPorId(UUID id) {
+        return healthRecordRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Health Record não encontrado"));
     }
 }

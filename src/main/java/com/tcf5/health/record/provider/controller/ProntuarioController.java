@@ -1,16 +1,18 @@
 package com.tcf5.health.record.provider.controller;
 
-import com.tcf5.health.record.provider.dto.ProntuarioDTO;
-import com.tcf5.health.record.provider.model.ProntuarioEntity;
+import com.tcf5.health.record.provider.dto.HealthRecordDTO;
+import com.tcf5.health.record.provider.model.HealthRecord;
 import com.tcf5.health.record.provider.service.ProntuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,60 +29,29 @@ public class ProntuarioController {
 
     @GetMapping("/paciente/{cpf}")
     @Operation(summary = "Lista o histórico completo pelo CPF")
-    public ResponseEntity<List<ProntuarioDTO>> listarHistorico(
-            @PathVariable @Size(min = 11, max = 11, message = "O CPF deve ter 11 dígitos") String cpf) {
+    public ResponseEntity<List<HealthRecordDTO>> listarHistorico(
+            @PathVariable @Size(min = 11, max = 14, message = "O CPF deve ter 11 dígitos") String cpf) {
 
-        List<ProntuarioDTO> dtos = service.listarHistorico(cpf).stream()
+        List<HealthRecordDTO> dtos = service.listarHistorico(cpf).stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
-    @GetMapping("/paciente/{cpf}/filtro")
-    @Operation(summary = "Consulta filtrada por tipo ou especialidade")
-    public ResponseEntity<List<ProntuarioDTO>> filtrar(
-            @PathVariable @Size(min = 11, max = 11, message = "O CPF deve ter 11 dígitos") String cpf,
-            @RequestParam(required = false) String tipo,
-            @RequestParam(required = false) String especialidade) {
-
-        List<ProntuarioEntity> resultados;
-
-        if (tipo != null) {
-            resultados = service.filtrarPorTipo(cpf, tipo);
-        } else if (especialidade != null) {
-            resultados = service.filtrarPorEspecialidade(cpf, especialidade);
-        } else {
-            resultados = service.listarHistorico(cpf);
-        }
-
-        return ResponseEntity.ok(resultados.stream().map(this::mapToDTO).collect(Collectors.toList()));
-    }
-
     @GetMapping("/{id}")
     @Operation(summary = "Busca um registro detalhado pelo ID interno")
-    public ResponseEntity<ProntuarioDTO> buscarPorId(@PathVariable UUID id) {
+    public ResponseEntity<HealthRecordDTO> buscarPorId(@PathVariable UUID id) {
         return ResponseEntity.ok(mapToDTO(service.buscarPorId(id)));
     }
 
-    @PatchMapping("/{id}/observacoes")
-    @Operation(summary = "Atualiza notas clínicas do prontuário")
-    public ResponseEntity<ProntuarioDTO> atualizarEdicao(
-            @PathVariable UUID id,
-            @RequestBody @NotBlank(message = "As observações não podem estar vazias") @Size(min = 5, message = "A observação deve ter pelo menos 5 caracteres") String observacoes) {
-
-        ProntuarioEntity atualizado = service.atualizarObservacoes(id, observacoes);
-        return ResponseEntity.ok(mapToDTO(atualizado));
-    }
-
-    private ProntuarioDTO mapToDTO(ProntuarioEntity entity) {
-        return ProntuarioDTO.builder()
+    private HealthRecordDTO mapToDTO(HealthRecord entity) {
+        return HealthRecordDTO.builder()
                 .id(entity.getId())
-                .cpf(entity.getCpf())
-                .cns(entity.getCns())
-                .tipoRegistro(entity.getTipoRegistro())
-                .especialidade(entity.getEspecialidade())
-                .dataRegistro(entity.getDataRegistro())
-                .observacoes(entity.getObservacoes())
+                .patientId(entity.getPatientId())
+                .resourceType(entity.getResourceType())
+                .clientId(entity.getClientId())
+                .resourceContent(entity.getResourceContent())
+                .processedAt(entity.getProcessedAt())
                 .build();
     }
 }

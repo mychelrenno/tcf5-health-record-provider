@@ -1,0 +1,18 @@
+{
+  "info": {
+    "_postman_id": "1b1d6d51-7cbb-446d-a4ca-a77c5445347f",
+    "name": "tcf5-health-record-provider",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "2641780"
+  },
+  "item": [
+    {
+      "name": "Lista o histórico completo pelo CPF",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
