@@ -38,10 +38,10 @@ public class ProntuarioController {
         return ResponseEntity.ok(dtos);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{clientId}")
     @Operation(summary = "Busca um registro detalhado pelo ID interno")
-    public ResponseEntity<HealthRecordDTO> buscarPorId(@PathVariable UUID id) {
-        return ResponseEntity.ok(mapToDTO(service.buscarPorId(id)));
+    public ResponseEntity<HealthRecordDTO> buscarPorId(@PathVariable UUID clientId) {
+        return ResponseEntity.ok(mapToDTO(service.findByClientId(clientId)));
     }
 
     private HealthRecordDTO mapToDTO(HealthRecord entity) {

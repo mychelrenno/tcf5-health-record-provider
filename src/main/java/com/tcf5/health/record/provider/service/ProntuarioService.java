@@ -17,8 +17,8 @@ public class ProntuarioService {
         return healthRecordRepository.findByPatientIdOrderByProcessedAtDesc(cpf);
     }
 
-    public HealthRecord buscarPorId(UUID id) {
-        return healthRecordRepository.findById(id)
+    public HealthRecord findByClientId(UUID clientId) {
+        return healthRecordRepository.findByClientId(clientId)
                 .orElseThrow(() -> new RuntimeException("Health Record não encontrado"));
     }
 }
